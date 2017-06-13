@@ -1,10 +1,12 @@
 <html>
 <head>
-  <title>Barry</title>
+  <title>mistro</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script type="text/javascript">
-    var accessToken = "dce399808780466db898fad9bfae71fe",
+    //var apiai = require('apiai');
+    //var app = apiai("<your client access token>");
+    var accessToken = "ce47a2f7bf354cfba3e2dfa6307d8591",
       baseUrl = "https://api.api.ai/v1/",
       $speechInput,
       $recBtn,
@@ -89,13 +91,13 @@
       var text = $speechInput.val();
       $.ajax({
         type: "POST",
-        url: baseUrl + "query",
+        url: baseUrl + "query?v=20150910",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         headers: {
           "Authorization": "Bearer " + accessToken
         },
-        data: JSON.stringify({query: text, lang: "en", sessionId: "yaydevdiner"}),
+        data: JSON.stringify({query: text, lang: "en", sessionId: "test_mistro1111111"}),
 
         success: function(data) {
           prepareResponse(data);
@@ -107,11 +109,22 @@
     }
 
     function prepareResponse(val) {
-      var debugJSON = JSON.stringify(val, undefined, 2),
-        spokenResponse = val.result.speech;
+      //console.log(val);
+      //var json_data=JSON.parse(val);
+      console.log(val.result.fulfillment.hasOwnProperty('speech'));
+     if (val.result.fulfillment.hasOwnProperty('speech')) {
+       var debugJSON = JSON.stringify(val, undefined, 2),
+       spokenResponse = val.result.fulfillment.speech;
+     }
+      else {
+        var debugJSON = JSON.stringify(val, undefined, 2),
+        spokenResponse = val.result.fulfillment.messages[0].speech;
+      }
+      
 
       respond(spokenResponse);
       debugRespond(debugJSON);
+      console.log(spokenResponse)
     }
 
     function debugRespond(val) {
@@ -133,6 +146,12 @@
 
       $("#spokenResponse").addClass("is-active").find(".spoken-response__text").html(val);
     }
+    
+    function ClearFields() {
+
+     document.getElementById("speech").value = "";
+     
+}
   </script>
   <style type="text/css">
     html {
@@ -230,6 +249,8 @@
   <div class="container">
     <input id="speech" type="text">
     <button id="rec" class="btn">Speak</button>
+    <button id="clear" class="btn" onclick="ClearFields();">clear</button>
+    
     <div id="spokenResponse" class="spoken-response">
       <div class="spoken-response__text"></div>
     </div>
